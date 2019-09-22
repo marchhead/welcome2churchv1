@@ -3,6 +3,7 @@ package nes.welcome2church.controller;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.xslf.usermodel.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -15,6 +16,7 @@ import java.io.OutputStream;
 
 @Controller
 @RequestMapping("/ppt")
+@CrossOrigin(origins = "*")
 public class PptController {
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     public void download(HttpServletResponse response) throws Exception {

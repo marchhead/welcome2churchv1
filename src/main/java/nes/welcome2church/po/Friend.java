@@ -10,13 +10,14 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "tbl_friend")
 @GenericGenerator(name = "friend_jpa_uuid", strategy = "uuid")
 @EntityListeners(AuditingEntityListener.class)
-public class Friend {
+public class Friend implements Serializable {
     @Id
     @Column(name = "friend_id")
     @GeneratedValue(generator = "friend_jpa_uuid")
@@ -42,6 +43,9 @@ public class Friend {
     @Length(max = 256)
     @Email
     private String email;
+
+    @Column(name = "pic_path", length = 256)
+    private String picPath;
 
     @Column(name = "address", length = 256)
     @Length(max = 256, message = "the length of address is too long")
