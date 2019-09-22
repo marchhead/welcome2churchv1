@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -37,6 +38,10 @@ public class Friend implements Serializable {
     @NotBlank(message = "first name should not be empty")
     @Length(min = 2, max = 30, message = "first name should be between 2 and 30")
     private String firstName;
+
+    @Column(name = "gender", length = 256)
+    @NotBlank(message = "gender should not be empty")
+    private Integer gender;
 
     @Column(name = "email", length = 256)
     @NotBlank(message = "email should not be empty")
@@ -81,18 +86,22 @@ public class Friend implements Serializable {
     @Column(name = "age")
     private Integer age;
 
-    @Column(name = "is_christian", columnDefinition = "default false")
+    @Column(name = "is_christian")
     private Boolean christian;
 
     @Column(name = "is_interested")
     private Boolean interested;
 
     //private String[] hobby;
-    @Column(name = "is_expired",columnDefinition = "default false")
+    @Column(name = "is_expired")
     private Boolean expired;
 
     @Column(name = "reason_to_miami")
     private String reasonToMiami;
+
+    @Column(name = "language", length = 128)
+    @NotEmpty(message = "language should not be empty")
+    private String language;
 
     @Column(name = "insert_date")
     @CreatedDate
@@ -214,6 +223,22 @@ public class Friend implements Serializable {
         this.age = age;
     }
 
+    public Integer getGender() {
+        return gender;
+    }
+
+    public void setGender(Integer gender) {
+        this.gender = gender;
+    }
+
+    public String getPicPath() {
+        return picPath;
+    }
+
+    public void setPicPath(String picPath) {
+        this.picPath = picPath;
+    }
+
     public Boolean getChristian() {
         return christian;
     }
@@ -228,6 +253,14 @@ public class Friend implements Serializable {
 
     public void setInterested(Boolean interested) {
         this.interested = interested;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public Boolean getExpired() {

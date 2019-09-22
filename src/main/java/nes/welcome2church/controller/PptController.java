@@ -1,14 +1,17 @@
 package nes.welcome2church.controller;
 
+import nes.welcome2church.po.Friend;
+import nes.welcome2church.repository.FriendRepository;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.xslf.usermodel.*;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
+import java.util.List;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +19,10 @@ import java.io.OutputStream;
 
 @Controller
 @RequestMapping("/ppt")
-@CrossOrigin(origins = "*")
 public class PptController {
+    @Resource(name = "friendRepository")
+    FriendRepository repository;
+
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     public void download(HttpServletResponse response) throws Exception {
         XMLSlideShow ppt = createPpt();
@@ -34,36 +39,30 @@ public class PptController {
         //creating presentation
         XMLSlideShow ppt = new XMLSlideShow();
 
-        int[] integers = {1, 2, 3, 4};
-
-        /* 开始遍历 */
-
-        for (int y : integers) {
-
+        //int[] integers = {1, 2, 3, 4};
+        List<Friend> ls = repository.getFriendsByCurrentDate();
+        for (Friend friend : ls) {
             XSLFSlide slide = ppt.createSlide();
-
-            //converting it into a byte array
-            //背景
-            byte[] bt = new byte[0];
             try {
+                byte[] bt = new byte[0];
                 bt = FileUtils.readFileToByteArray(new File("src/pic/background.jpg"));
+                int idx = ppt.addPicture(bt, XSLFPictureData.PICTURE_TYPE_PNG);
+                XSLFPictureShape pic = slide.createPicture(idx);
+                pic.setAnchor(new Rectangle2D.Double(0, 0, 720, 580));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            int idx = ppt.addPicture(bt, XSLFPictureData.PICTURE_TYPE_PNG);
-            XSLFPictureShape pic = slide.createPicture(idx);
-            pic.setAnchor(new Rectangle2D.Double(0, 0, 720, 580));
 
             //头像
             byte[] bt1 = new byte[0];
             try {
-                bt1 = FileUtils.readFileToByteArray(new File("src/pic/head.jpeg"));
+                bt1 = FileUtils.readFileToByteArray(new File(friend.getPicPath()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
             int idx1 = ppt.addPicture(bt1, XSLFPictureData.PICTURE_TYPE_PNG);
             XSLFPictureShape pic1 = slide.createPicture(idx1);
-            pic1.setAnchor(new Rectangle(50, 200, 200, 200));
+            pic1.setAnchor(new Rectangle2D.Double(50, 200, 200, 200));
 
             //背景slogan
             byte[] bt2 = new byte[0];
@@ -77,7 +76,7 @@ public class PptController {
             pic2.setAnchor(new Rectangle2D.Double(0, 0, 720, 150));
 
             //Table
-            Object[][] datas = {{"--", "--"}, {"姓名", "--"}, {"性别", "--"}, {"年龄", "--"}, {"学校", "--"}, {"--", "--"}};
+            Object[][] datas = {{"Last Name", friend.getLastName()}, {"First Name", friend.getFirstName()}, {"Nationality", friend.getNationality()}, {"Organization", friend.getOrganization()}};
             XSLFTable table = slide.createTable();//创建表格
             table.setAnchor(new Rectangle2D.Double(300, 200, 300, 200));
             for (int i = 0; i < datas.length; i++) {
